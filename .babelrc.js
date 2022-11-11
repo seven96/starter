@@ -3,12 +3,15 @@ module.exports = {
         [
             "@babel/preset-env",
             {
+                modules: false,
                 "targets": {
                     "browsers": [
                         "last 2 versions",
                         "safari >= 7"
                     ]
-                }
+                },
+                "useBuiltIns": "usage",
+                "corejs": 3
             }
         ],
 
