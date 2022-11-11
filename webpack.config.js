@@ -86,6 +86,9 @@ module.exports = {
                 parallel: true,
                 extractComments: false,
                 terserOptions: {
+                    output: {
+                        comments: false,
+                    },
                     // topLevel: true,
                     ie8: true,
                     safari10: true,
@@ -125,15 +128,7 @@ module.exports = {
                     {
                         loader: 'babel-loader',
                         options: {
-                            cacheDirectory: true,
-                            plugins: [
-                                [
-                                    "@babel/plugin-transform-runtime",
-                                    {
-                                        "corejs": 3
-                                    }
-                                ],
-                            ]
+                            cacheDirectory: true
                         }
                     }
                 ],
@@ -247,10 +242,6 @@ module.exports = {
             linkType: 'text/css'
         }),
 
-        // hmr: development
-        new webpack.HotModuleReplacementPlugin(),
-        new ReactRefreshWebpackPlugin(),
-
         new webpack.SourceMapDevToolPlugin({
             append: `\n//# sourceMappingURL=${deployment.sourceMap.host}[url]`,
             filename: 'sourcemap/[file].map',
@@ -286,11 +277,14 @@ module.exports = {
                 },
             ]
         }),
-        
-        envs.isDev ? new BundleAnalyzerPlugin({
+
+        // hmr: development
+        envs.isDev ? new webpack.HotModuleReplacementPlugin() : null,
+        envs.isDev ? new ReactRefreshWebpackPlugin() : null,
+        (envs.isDev || process.env.ANALYZE === 'enable') ? new BundleAnalyzerPlugin({
             analyzerMode: 'server',
             analyzerPort: 8888,
-            openAnalyzer: envs.isDev,
+            openAnalyzer: process.env.OPEN_ANALYZER === 'enable',
             reportFilename: 'report.html',
             defaultSizes: 'parsed',
             generateStatsFile: true,

@@ -6,9 +6,11 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "cross-env NODE_ENV=development webpack serve",
     "build": "cross-env NODE_ENV=production webpack",
-    "local": "pnpm build && live-server dist --port=8080"
+    "local": "pnpm build && live-server dist --port=8080",
+    "analyze": "cross-env NODE_ENV=production ANALYZE=enable webpack && webpack-bundle-analyzer ./dist/analyzer.json"
   },
   "dependencies": {
+    "core-js-pure": "3.26.0",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },

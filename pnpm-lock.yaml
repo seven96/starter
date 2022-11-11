@@ -17,6 +17,7 @@ specifiers:
   cache-loader: 4.1.0
   clean-webpack-plugin: 4.0.0
   core-js: 3.26.0
+  core-js-pure: 3.26.0
   cross-env: 7.0.3
   css-loader: 6.7.1
   css-minimizer-webpack-plugin: 4.2.2
@@ -48,6 +49,7 @@ specifiers:
   webpackbar: ^5.0.2
 
 dependencies:
+  core-js-pure: 3.26.0
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
 
@@ -2822,7 +2824,6 @@ packages:
   /core-js-pure/3.26.0:
     resolution: {integrity: sha512-LiN6fylpVBVwT8twhhluD9TzXmZQQsr2I2eIKtWNbZI1XMfBT7CV18itaN6RA7EtQd/SDdRx/wzvAShX2HvhQA==}
     requiresBuild: true
-    dev: true
 
   /core-js/3.26.0:
     resolution: {integrity: sha512-+DkDrhoR4Y0PxDz6rurahuB+I45OsEUv8E1maPTB6OuHRohMMcznBq9TMpdpDMm/hUPob/mJJS3PqgbHpMTQgw==}
