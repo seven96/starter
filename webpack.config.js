@@ -4,13 +4,17 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 
 // perform the configuration
 const webpack = require('webpack');
 const webpackBar = require('webpackbar');
 const ForkTSCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 
-const { envs } = require('./scripts/env');
+// const { envs } = require('./scripts/env');
+const { deployment } = require('./scripts/config');
 
 // dirs
 const rootDir = path.resolve(__dirname);
@@ -25,9 +29,10 @@ module.exports = {
     },
 
     output: {
+        publicPath: './',
         clean: true,
         path: path.resolve(__dirname, 'dist'),
-        filename: '[name].[hash:8].js',
+        filename: 'scripts/[name].[hash:8].js',
     },
 
     devtool: 'source-map',
@@ -38,7 +43,9 @@ module.exports = {
             config: [__filename]
         }
     },
+
     optimization: {
+        concatenateModules: true,
         minimize: true,
         runtimeChunk: "multiple",
         splitChunks: {
@@ -52,6 +59,12 @@ module.exports = {
                     priority: -10,
                     name(module) {
                         const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1];
+
+                        // 排除 .pnpm 目录
+                        if (packageName.startsWith('.pnpm')) {
+                            return "vendors";
+                        }
+
                         return `${packageName.replace('@', '')}`;
                     }
                 },
@@ -61,7 +74,24 @@ module.exports = {
                     reuseExistingChunk: true
                 }
             }
-        }
+        },
+        minimize: true,
+        minimizer: [
+            new TerserPlugin({
+                parallel: true,
+                extractComments: false,
+                terserOptions: {
+                    // topLevel: true,
+                    ie8: true,
+                    safari10: true,
+                    compress: {
+                        drop_console: true,
+                        drop_debugger: true,
+                    },
+                },
+            }),
+            new CssMinimizerPlugin(),
+        ]
     },
 
     resolve: {
@@ -84,29 +114,113 @@ module.exports = {
                 // https://github.com/privatenumber/esbuild-loader
                 test: /\.(tsx?|m?js)$/,
                 exclude: /node_modules/,
-                loader: 'babel-loader',
-                options: {
-                    cacheDirectory: true,
-                }
+                use: [
+                    "cache-loader",
+                    "thread-loader",
+                    {
+                        loader: 'babel-loader',
+                        options: {
+                            cacheDirectory: true,
+                            plugins: [
+                                [
+                                    "@babel/plugin-transform-runtime",
+                                    {
+                                        "corejs": 3,
+                                        "helpers": true,
+                                        "regenerator": true,
+                                        "useESModules": true
+                                    }
+                                ]
+                            ]
+                        }
+                    }
+                ],
             },
             {
-                test: [/\.gif$/, /\.png$/, /\.jpe?g$/, /\.bpm$/, /\.webm$/],
+                test: [/\.gif$/, /\.png$/, /\.jpe?g$/, /\.bpm$/, /\.webm$/, /\.svg/],
                 type: "asset",
                 parser: {
                     dataUrlCondition: {
                         maxSize: 4 * 1024 // 4kb
                     }
+                },
+                generator: {
+                    filename: "static/images/[name].[hash:8][ext][query]"
                 }
             },
             {
-                test: /\.(eot|svg|ttf|woff2?)$/,
-                type: "asset/resource"
+                test: /\.(eot|ttf|mp3|mp4|map3|map4|avi|woff2?)$/,
+                type: "asset/resource",
+                generator: {
+                    filename: "static/media/[name].[hash:8][ext][query]"
+                }
+            },
+
+            // styles
+            {
+                test: /\.css$/,
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            modules: true,
+                            import: true,
+                        }
+                    },
+                    {
+                        loader: 'postcss-loader',
+                        options: {
+                            postcssOptions: {
+                                plugins: ['postcss-preset-env', 'autoprefixer'],
+                            },
+                        },
+                    }]
+            },
+            {
+                test: /\.less$/,
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            modules: true,
+                            import: true,
+                        }
+                    },
+                    {
+                        loader: 'postcss-loader',
+                        options: {
+                            postcssOptions: {
+                                plugins: ['postcss-preset-env', 'autoprefixer'],
+                            },
+                        },
+                    },
+                    {
+                        loader: 'less-loader',
+                        options: {
+                            lessOptions: {
+                                javascriptEnabled: true,
+                            }
+                        }
+                    },
+                    {
+                        loader: 'style-resources-loader',
+                        options: {
+                            patterns: [
+                                path.resolve(sourceDir, 'styles/variables.less'),
+                                path.resolve(sourceDir, 'styles/mixins.less'),
+                            ],
+                            injector: 'append'
+                        }
+                    }],
             }
         ]
     },
 
     plugins: [
         new webpack.ids.HashedModuleIdsPlugin(),
+
         new HtmlWebpackPlugin({
             template: './public/index.html',
             hash: true,
@@ -124,10 +238,22 @@ module.exports = {
         new webpack.DefinePlugin({
             'process.env.NODE_ENV': JSON.stringify('production')
         }),
+        // new webpack.EnvironmentPlugin(['NODE_ENV', 'DEBUG']),
+
+        new MiniCssExtractPlugin({
+            filename: 'styles/[name].[hash:8].css',
+            chunkFilename: 'styles/[id].[hash:8].css',
+            linkType: 'text/css'
+        }),
 
         // hmr: development
         new webpack.HotModuleReplacementPlugin(),
         new ReactRefreshWebpackPlugin(),
+
+        new webpack.SourceMapDevToolPlugin({
+            append: `\n//# sourceMappingURL=${deployment.sourceMap.host}[url]`,
+            filename: 'sourcemap/[file].map',
+        }),
 
         // progress bar
         new webpackBar({

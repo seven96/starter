@@ -33,7 +33,16 @@
       "@hooks/*": ["src/hooks/*"],
       "@services/*": ["src/services/*"],
       "@utils": ["src/utils/*"],
-    }
+    },
+    "plugins": [
+      // https://www.npmjs.com/package/typescript-plugin-css-modules#options
+      {
+        "name": "typescript-plugin-css-modules",
+        "options": {
+          "classnameTransform": "camelCase",
+        }
+      }
+    ]
   },
   "exclude": [
     "node_modules",
