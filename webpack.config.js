@@ -12,8 +12,9 @@ const TerserPlugin = require('terser-webpack-plugin');
 const webpack = require('webpack');
 const webpackBar = require('webpackbar');
 const ForkTSCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 
-// const { envs } = require('./scripts/env');
+const { envs } = require('./scripts/env');
 const { deployment } = require('./scripts/config');
 
 // dirs
@@ -23,7 +24,7 @@ const sourceDir = path.resolve(rootDir, "./src");
 const defaultExtensions = [".ts", ".tsx", ".js", ".jsx", ".json"];
 
 module.exports = {
-    mode: 'production',
+    mode: envs.isDev ? "development" : 'production',
     entry: {
         main: './src/index.tsx',
     },
@@ -33,11 +34,15 @@ module.exports = {
         clean: true,
         path: path.resolve(__dirname, 'dist'),
         filename: 'scripts/[name].[hash:8].js',
+        assetModuleFilename: 'assets/[hash][ext][query]',
+        globalObject: 'this',
     },
 
     devtool: 'source-map',
 
-    cache: {
+    cache: envs.isDev ? {
+        type: "memory",
+    } : {
         type: "filesystem",
         buildDependencies: {
             config: [__filename]
@@ -130,7 +135,7 @@ module.exports = {
                                         "regenerator": true,
                                         "useESModules": true
                                     }
-                                ]
+                                ],
                             ]
                         }
                     }
@@ -220,7 +225,6 @@ module.exports = {
 
     plugins: [
         new webpack.ids.HashedModuleIdsPlugin(),
-
         new HtmlWebpackPlugin({
             template: './public/index.html',
             hash: true,
@@ -236,7 +240,7 @@ module.exports = {
 
         // define environment variables
         new webpack.DefinePlugin({
-            'process.env.NODE_ENV': JSON.stringify('production')
+            'NODE_ENV': process.env.NODE_ENV,
         }),
         // new webpack.EnvironmentPlugin(['NODE_ENV', 'DEBUG']),
 
@@ -284,6 +288,42 @@ module.exports = {
                     global: 'ReactDOM',
                 },
             ]
-        })
-    ]
+        }),
+        
+        envs.isDev ? new BundleAnalyzerPlugin({
+            analyzerMode: 'server',
+            analyzerPort: 8888,
+            openAnalyzer: envs.isDev,
+            reportFilename: 'report.html',
+            defaultSizes: 'parsed',
+            generateStatsFile: true,
+            statsFilename: 'analyzer.json',
+        }) : null,
+    ].filter(Boolean),
+
+    watchOptions: {
+        ignored: /node_modules/,
+        aggregateTimeout: 300,
+        poll: 1000
+    },
+    devServer: {
+        devMiddleware: {
+            writeToDisk: true,
+        },
+        static: {
+            directory: path.join(__dirname, 'dist'),
+        },
+        compress: true,
+        port: 9000,
+        open: true,
+        client: {
+            overlay: true,
+            progress: true,
+            reconnect: true,
+            logging: 'error',
+        },
+        watchFiles: {
+            paths: ['src/**/*', 'public/**/*'],
+        },
+    }
 };
