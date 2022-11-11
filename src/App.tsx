@@ -1,6 +1,7 @@
 import React from 'react';
 import "./app.module.less";
 import "./app.css";
+import Home from './pages/Home';
 
 const App: React.FC = () => {
     return (

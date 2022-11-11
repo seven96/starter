@@ -28,6 +28,14 @@ module.exports = {
             {
                 // https://www.babeljs.cn/docs/babel-preset-typescript#istsx
                 "isTSX": false,
-            }]
+            }
+        ]
+    ],
+
+    "plugins": [
+        // https://www.babeljs.cn/docs/babel-plugin-proposal-export-default-from
+        "@babel/plugin-proposal-export-default-from",
+        // https://www.babeljs.cn/docs/babel-plugin-proposal-decorators
+        // "@babel/plugin-proposal-decorators"
     ]
 }
