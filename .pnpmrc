@@ -1,0 +1,8 @@
+hoist=true
+
+# docs: https://docs.npmjs.com/cli/v8/configuring-npm/npmrc
+
+engine-strict=true
+
+# taobao registry
+registry=https://registry.npmmirror.com/

@@ -101,7 +101,7 @@ module.exports = {
         },
         modules: [path.resolve(rootDir, "build-plugins"), "node_modules"],
         // https://webpack.docschina.org/configuration/resolve/#resolvesymlinks
-        symlinks: false,
+        // symlinks: false,
     },
     module: {
         rules: [
@@ -145,12 +145,16 @@ module.exports = {
             // styles
             {
                 test: /\.css$/,
+                exclude: [/node_modules/],
                 use: [
                     MiniCssExtractPlugin.loader,
                     {
                         loader: 'css-loader',
                         options: {
-                            modules: true,
+                            modules: {
+                                mode: 'local',
+                                localIdentName: '[local]_[hash:base64:5]',
+                            },
                             import: true,
                         }
                     },
@@ -164,13 +168,27 @@ module.exports = {
                     }]
             },
             {
+                test: /\.css$/,
+                exclude: [/src/],
+                use: [
+                    "cache-loader",
+                    "style-loader",
+                    "css-loader",
+                ]
+            },
+            {
                 test: /\.less$/,
+                exclude: [/node_modules/],
                 use: [
                     MiniCssExtractPlugin.loader,
+                    // 'thread-loader',
                     {
                         loader: 'css-loader',
                         options: {
-                            modules: true,
+                            modules: {
+                                mode: 'local',
+                                localIdentName: '[local]_[hash:base64:5]',
+                            },
                             import: true,
                         }
                     },
@@ -187,6 +205,12 @@ module.exports = {
                         options: {
                             lessOptions: {
                                 javascriptEnabled: true,
+                                exclude: /node_modules/,
+                                modifyVars: {
+                                    'primary-color': '#1DA57A',
+                                    'link-color': '#1DA57A',
+                                    'border-radius-base': '2px',
+                                },
                             }
                         }
                     },
@@ -199,7 +223,55 @@ module.exports = {
                             ],
                             injector: 'append'
                         }
-                    }],
+                    }
+                ],
+            },
+            {
+                test: /\.less$/,
+                exclude: [/src/],
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    // 'thread-loader',
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            modules: false,
+                            import: true,
+                        }
+                    },
+                    {
+                        loader: 'postcss-loader',
+                        options: {
+                            postcssOptions: {
+                                plugins: ['postcss-preset-env', 'autoprefixer'],
+                            },
+                        },
+                    },
+                    {
+                        loader: 'less-loader',
+                        options: {
+                            lessOptions: {
+                                javascriptEnabled: true,
+                                exclude: /node_modules/,
+                                modifyVars: {
+                                    'primary-color': '#1DA57A',
+                                    'link-color': '#1DA57A',
+                                    'border-radius-base': '2px',
+                                },
+                            }
+                        }
+                    },
+                    {
+                        loader: 'style-resources-loader',
+                        options: {
+                            patterns: [
+                                path.resolve(sourceDir, 'styles/variables.less'),
+                                path.resolve(sourceDir, 'styles/mixins.less'),
+                            ],
+                            injector: 'append'
+                        }
+                    }
+                ],
             }
         ]
     },
@@ -226,7 +298,9 @@ module.exports = {
         new MiniCssExtractPlugin({
             filename: 'styles/[name].[contenthash:8].css',
             chunkFilename: 'styles/[id].[contenthash:8].css',
-            linkType: 'text/css'
+            linkType: 'text/css',
+            experimentalUseImportModule: true,
+            ignoreOrder: true,
         }),
         // new webpack.SourceMapDevToolPlugin({
         //     append: `\n//# sourceMappingURL=${deployment.sourceMap.host}[url]`,
