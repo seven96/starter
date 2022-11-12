@@ -33,16 +33,14 @@ module.exports = {
         publicPath: './',
         clean: true,
         path: path.resolve(__dirname, 'dist'),
-        filename: 'scripts/[name].[hash:8].js',
-        assetModuleFilename: 'assets/[hash][ext][query]',
+        filename: 'scripts/[name].[contenthash:8].js',
+        assetModuleFilename: 'assets/[contenthash:8][ext][query]',
         globalObject: 'this',
     },
 
-    devtool: 'source-map',
+    // devtool: 'source-map',
 
-    cache: envs.isDev ? {
-        type: "memory",
-    } : {
+    cache: {
         type: "filesystem",
         buildDependencies: {
             config: [__filename]
@@ -63,10 +61,10 @@ module.exports = {
                     test: /[\\/]node_modules[\\/]/,
                     priority: -10,
                     name(module) {
-                        const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1];
+                        const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)?.[1];
 
                         // 排除 .pnpm 目录
-                        if (packageName.startsWith('.pnpm')) {
+                        if (packageName?.startsWith('.pnpm') || !packageName) {
                             return "vendors";
                         }
 
@@ -142,14 +140,14 @@ module.exports = {
                     }
                 },
                 generator: {
-                    filename: "static/images/[name].[hash:8][ext][query]"
+                    filename: "static/images/[name].[contenthash:8][ext][query]"
                 }
             },
             {
                 test: /\.(eot|ttf|mp3|mp4|map3|map4|avi|woff2?)$/,
                 type: "asset/resource",
                 generator: {
-                    filename: "static/media/[name].[hash:8][ext][query]"
+                    filename: "static/media/[name].[contenthash:8][ext][query]"
                 }
             },
 
@@ -237,15 +235,15 @@ module.exports = {
         // new webpack.EnvironmentPlugin(['NODE_ENV', 'DEBUG']),
 
         new MiniCssExtractPlugin({
-            filename: 'styles/[name].[hash:8].css',
-            chunkFilename: 'styles/[id].[hash:8].css',
+            filename: 'styles/[name].[contenthash:8].css',
+            chunkFilename: 'styles/[id].[contenthash:8].css',
             linkType: 'text/css'
         }),
 
-        new webpack.SourceMapDevToolPlugin({
-            append: `\n//# sourceMappingURL=${deployment.sourceMap.host}[url]`,
-            filename: 'sourcemap/[file].map',
-        }),
+        // new webpack.SourceMapDevToolPlugin({
+        //     append: `\n//# sourceMappingURL=${deployment.sourceMap.host}[url]`,
+        //     filename: 'sourcemap/[file].map',
+        // }),
 
         // progress bar
         new webpackBar({
@@ -257,10 +255,7 @@ module.exports = {
                 configFile: path.resolve(rootDir, "./tsconfig.json")
             }
         }),
-        new CleanWebpackPlugin({
-            verbose: true,
-            cleanStaleWebpackAssets: true,
-        }),
+        new CleanWebpackPlugin({ verbose: true}),
 
         // 将 react、react-dom 作为外部依赖，不打包到 bundle 中
         new HtmlWebpackExternalsPlugin({
@@ -281,7 +276,7 @@ module.exports = {
         // hmr: development
         envs.isDev ? new webpack.HotModuleReplacementPlugin() : null,
         envs.isDev ? new ReactRefreshWebpackPlugin() : null,
-        (envs.isDev || process.env.ANALYZE === 'enable') ? new BundleAnalyzerPlugin({
+        (envs.isProd && process.env.ANALYZE === 'enable') ? new BundleAnalyzerPlugin({
             analyzerMode: 'server',
             analyzerPort: 8888,
             openAnalyzer: process.env.OPEN_ANALYZER === 'enable',
@@ -304,6 +299,7 @@ module.exports = {
         static: {
             directory: path.join(__dirname, 'dist'),
         },
+        historyApiFallback: true,
         compress: true,
         port: 9000,
         open: true,

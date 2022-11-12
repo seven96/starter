@@ -38,5 +38,6 @@ module.exports = {
     "plugins": [
         // https://www.babeljs.cn/docs/babel-plugin-proposal-export-default-from
         "@babel/plugin-proposal-export-default-from",
+        "react-refresh/babel",
     ]
 }
