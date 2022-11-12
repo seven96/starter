@@ -42,7 +42,13 @@
           "classnameTransform": "camelCase",
         }
       }
-    ]
+    ],
+
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/@types",
+      "./src/typings"
+    ],
   },
   "exclude": [
     "node_modules",

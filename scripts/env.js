@@ -6,6 +6,7 @@ const envConfig = {
     development: ["dev", "development", "local", "wip"],
     production: ["prod", "production", "staging", "preview", "release"],
     test: ["test", "testing"],
+    analyze: ["analyze", "analyzing"],
 };
 
 function getEnvConfig(env) {
@@ -24,6 +25,7 @@ const envs = {
     isDev: getEnvConfig("development").includes(getEnv()),
     isProd: getEnvConfig("production").includes(getEnv()),
     isTest: getEnvConfig("test").includes(getEnv()),
+    isAnalyze: getEnvConfig("analyze").includes(getEnv()),
 }
 
 module.exports = {

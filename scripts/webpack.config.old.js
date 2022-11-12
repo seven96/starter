@@ -54,7 +54,7 @@ module.exports = {
         splitChunks: {
             chunks: 'all',
             minSize: 0,
-            minChunks: 1,
+            minChunks: 2,
             maxAsyncRequests: Infinity,
             cacheGroups: {
                 vendors: {
@@ -62,12 +62,10 @@ module.exports = {
                     priority: -10,
                     name(module) {
                         const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)?.[1];
-
-                        // 排除 .pnpm 目录
+                        // 排除.pnpm目录或无法识别的包
                         if (packageName?.startsWith('.pnpm') || !packageName) {
                             return "vendors";
                         }
-
                         return `${packageName.replace('@', '')}`;
                     }
                 },
@@ -134,6 +132,7 @@ module.exports = {
             {
                 test: [/\.gif$/, /\.png$/, /\.jpe?g$/, /\.bpm$/, /\.webm$/, /\.svg/],
                 type: "asset",
+                use: ["cache-loader"],
                 parser: {
                     dataUrlCondition: {
                         maxSize: 4 * 1024 // 4kb
@@ -146,16 +145,20 @@ module.exports = {
             {
                 test: /\.(eot|ttf|mp3|mp4|map3|map4|avi|woff2?)$/,
                 type: "asset/resource",
+                use: [
+                    "cache-loader"
+                ],
                 generator: {
                     filename: "static/media/[name].[contenthash:8][ext][query]"
                 }
             },
-
             // styles
             {
                 test: /\.css$/,
                 use: [
+                    "cache-loader",
                     MiniCssExtractPlugin.loader,
+                    "thread-loader",
                     {
                         loader: 'css-loader',
                         options: {
@@ -175,7 +178,9 @@ module.exports = {
             {
                 test: /\.less$/,
                 use: [
+                    "cache-loader",
                     MiniCssExtractPlugin.loader,
+                    "thread-loader",
                     {
                         loader: 'css-loader',
                         options: {
@@ -227,7 +232,6 @@ module.exports = {
                 minifyURLs: true,
             },
         }),
-
         // define environment variables
         new webpack.DefinePlugin({
             'NODE_ENV': process.env.NODE_ENV,
@@ -239,22 +243,17 @@ module.exports = {
             chunkFilename: 'styles/[id].[contenthash:8].css',
             linkType: 'text/css'
         }),
-
-        // new webpack.SourceMapDevToolPlugin({
-        //     append: `\n//# sourceMappingURL=${deployment.sourceMap.host}[url]`,
-        //     filename: 'sourcemap/[file].map',
-        // }),
-
-        // progress bar
-        new webpackBar({
-            name: 'Webpack',
-            color: 'green'
+        new webpack.SourceMapDevToolPlugin({
+            append: `\n//# sourceMappingURL=${deployment.sourceMap.host}[url]`,
+            filename: 'sourcemap/[file].map',
         }),
+        new webpackBar({ name: 'Webpack', color: 'green' }),
         new ForkTSCheckerWebpackPlugin({
             typescript: {
                 configFile: path.resolve(rootDir, "./tsconfig.json")
             }
         }),
+        // https://www.npmjs.com/package/clean-webpack-plugin
         new CleanWebpackPlugin({ verbose: true}),
 
         // 将 react、react-dom 作为外部依赖，不打包到 bundle 中

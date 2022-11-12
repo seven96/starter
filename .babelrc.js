@@ -1,3 +1,5 @@
+const { envs } = require("./scripts/env");
+
 module.exports = {
     "presets": [
         [
@@ -21,10 +23,9 @@ module.exports = {
             {
                 "throwIfNamespace": true,
                 "pure": true,
-                "development": process.env.NODE_ENV === "development"
+                "development": envs.isDev,
             }
         ],
-
         // https://www.babeljs.cn/docs/babel-preset-typescript
         [
             "@babel/preset-typescript",
@@ -37,7 +38,6 @@ module.exports = {
 
     "plugins": [
         // https://www.babeljs.cn/docs/babel-plugin-proposal-export-default-from
-        "@babel/plugin-proposal-export-default-from",
-        "react-refresh/babel",
+        "@babel/plugin-proposal-export-default-from"
     ]
 }
