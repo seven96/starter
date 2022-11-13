@@ -1,6 +1,6 @@
 import React from "react";
-import WebpackImage from "@/assets/images/webpack.png";
 import { Button } from "antd";
+import WebpackImage from "@/assets/images/webpack.png";
 
 const About: React.FC = () => {
     return (

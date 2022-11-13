@@ -7,6 +7,9 @@ import Layout from "@/layouts";
 import Home from "@/pages/Home";
 import About from "@/pages/About";
 
+import StoreSelector from "@/pages/store-test/StoreSelector";
+import StoreConnect from "@/pages/store-test/StoreConnect";
+
 export const router = defineRouterFactory({
     mode: RouterTypeEnum.Hash,
     routes: [
@@ -14,8 +17,10 @@ export const router = defineRouterFactory({
             path: "/",
             element: <Layout />,
             children: [
+                { path: "/", element: <Home /> },
                 { path: "about", element: <About /> },
-                { path: "/", element: <Home /> }
+                { path: "store-selector", element: <StoreSelector /> },
+                { path: "store-connect", element: <StoreConnect /> }
             ]
         }
     ],
