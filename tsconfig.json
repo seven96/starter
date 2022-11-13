@@ -47,7 +47,8 @@
     "typeRoots": [
       "./node_modules/@types",
       "./src/@types",
-      "./src/typings"
+      "./src/typings",
+      "./auto-imports.d.ts"
     ],
   },
   "exclude": [

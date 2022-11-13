@@ -8,6 +8,12 @@ const distDir = path.resolve(rootDir, 'dist');
 
 module.exports = merge(common, {
     mode: "development",
+    resolve: {
+        alias: {
+            'react-dom$': 'react-dom/profiling',
+            'scheduler/tracing': 'scheduler/tracing-profiling',
+        }
+    },
     devServer: {
         devMiddleware: {
             writeToDisk: true,

@@ -12,6 +12,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const webpack = require('webpack');
 const webpackBar = require('webpackbar');
 const ForkTSCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
+const AutoImportPlugin = require('unplugin-auto-import/webpack');
 
 const { envs } = require('./env');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
@@ -355,5 +356,19 @@ module.exports = {
         }),
         new webpack.IgnorePlugin({ resourceRegExp: /^\.\/locale$/, contextRegExp: /moment$/ }),
         new webpack.IgnorePlugin({ resourceRegExp: /^\.\/locale$/, contextRegExp: /antd$/ }),
+
+        AutoImportPlugin({
+            // 配置需要自动引入的模块
+            imports: [
+                "react",
+                "react-router-dom",
+            ],
+            dirs: [
+                "../src/hooks",
+                "../src/components",
+                "../src/pages",
+                "../src/services",
+            ]
+        }),
     ].filter(Boolean),
 };
