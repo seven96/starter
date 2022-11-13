@@ -13,7 +13,6 @@ const webpack = require('webpack');
 const webpackBar = require('webpackbar');
 const ForkTSCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 
-// const { deployment } = require('./config');
 const { envs } = require('./env');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
@@ -29,7 +28,7 @@ module.exports = {
         publicPath: './',
         path: path.resolve(rootDir, 'dist'),
         filename: 'scripts/[name].[contenthash:8].js',
-        assetModuleFilename: 'assets/[contenthash:8][ext][query]',
+        // assetModuleFilename: 'assets/[contenthash:8][ext][query]',
         globalObject: 'this',
         asyncChunks: true,
     },
@@ -131,14 +130,14 @@ module.exports = {
                     }
                 },
                 generator: {
-                    filename: "static/images/[name].[contenthash:8][ext][query]"
+                    filename: "static/images/[name][ext][query]"
                 }
             },
             {
                 test: /\.(eot|ttf|mp3|mp4|map3|map4|avi|woff2?)$/,
                 type: "asset/resource",
                 generator: {
-                    filename: "static/media/[name].[contenthash:8][ext][query]"
+                    filename: "static/media/[name][ext][query]"
                 }
             },
 
@@ -292,7 +291,10 @@ module.exports = {
         }),
         // define environment variables
         new webpack.DefinePlugin({
-            'NODE_ENV': process.env.NODE_ENV,
+            'process.env': JSON.stringify({
+                NODE_ENV: process.env.NODE_ENV,
+                ...envs
+            }),
         }),
         // new webpack.EnvironmentPlugin(['NODE_ENV', 'DEBUG']),
         new MiniCssExtractPlugin({
@@ -302,10 +304,6 @@ module.exports = {
             experimentalUseImportModule: true,
             ignoreOrder: true,
         }),
-        // new webpack.SourceMapDevToolPlugin({
-        //     append: `\n//# sourceMappingURL=${deployment.sourceMap.host}[url]`,
-        //     filename: 'sourcemap/[file].map',
-        // }),
         new webpackBar({ name: 'Webpack', color: 'green' }),
         new ForkTSCheckerWebpackPlugin({
             typescript: {
@@ -324,11 +322,11 @@ module.exports = {
                         ignore: ['**/index.html']
                     }
                 },
-                {
-                    from: path.resolve(sourceDir, "./assets"),
-                    to: path.resolve(rootDir, "./dist/assets"),
-                    noErrorOnMissing: true,
-                }
+                // {
+                //     from: path.resolve(sourceDir, "./assets"),
+                //     to: path.resolve(rootDir, "./dist/assets"),
+                //     noErrorOnMissing: true,
+                // }
             ]
         }),
         // 将 react、react-dom 作为外部依赖，不打包到 bundle 中

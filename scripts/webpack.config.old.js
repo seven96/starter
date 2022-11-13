@@ -15,7 +15,7 @@ const ForkTSCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 
 const { envs } = require('./scripts/env');
-const { deployment } = require('./scripts/config');
+// const { deployment } = require('./scripts/config');
 
 // dirs
 const rootDir = path.resolve(__dirname);
@@ -243,10 +243,10 @@ module.exports = {
             chunkFilename: 'styles/[id].[contenthash:8].css',
             linkType: 'text/css'
         }),
-        new webpack.SourceMapDevToolPlugin({
-            append: `\n//# sourceMappingURL=${deployment.sourceMap.host}[url]`,
-            filename: 'sourcemap/[file].map',
-        }),
+        // new webpack.SourceMapDevToolPlugin({
+        //     append: `\n//# sourceMappingURL=${deployment.sourceMap.host}[url]`,
+        //     filename: 'sourcemap/[file].map',
+        // }),
         new webpackBar({ name: 'Webpack', color: 'green' }),
         new ForkTSCheckerWebpackPlugin({
             typescript: {
