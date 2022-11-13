@@ -2,6 +2,9 @@ import React from "react";
 import { Button } from "antd";
 import { useBoolean } from "ahooks";
 import { useTranslation } from "react-i18next";
+import { Outlet } from "react-router";
+import { Link } from "react-router-dom";
+import { Paths } from "@/settings";
 import { changeLanguage } from "@/locales";
 import HelloWorld from "@components/HelloWorld";
 
@@ -37,6 +40,16 @@ const Home: React.FC = () => {
             <Button type="primary" onClick={toggle}>
                 Primary Button
             </Button>
+
+            <hr />
+
+            <Button>
+                <Link to={Paths.SubPage}>SubStorePage</Link>
+            </Button>
+
+            <section>
+                <Outlet />
+            </section>
         </div>
     );
 }
