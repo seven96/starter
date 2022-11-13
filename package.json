@@ -10,7 +10,7 @@
     "analyze": "pnpm analyze:build && pnpm analyze:server",
     "analyze:start": "webpack-bundle-analyzer ./dist/analyzer.json",
     "analyze:build": "cross-env ANALYZE=analyze webpack --config ./scripts/webpack.config.js",
-    "preinstall": "only-allow pnpm",
+    "preinstall": "only-allow pnpm && sh ./scripts/preinstall.sh",
     "prepare": "husky install",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx src"
   },
