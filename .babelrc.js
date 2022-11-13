@@ -24,6 +24,8 @@ module.exports = {
                 "throwIfNamespace": true,
                 "pure": true,
                 "development": envs.isDev,
+                "runtime": "automatic",
+                "importSource": "@welldone-software/why-did-you-render"
             }
         ],
         // https://www.babeljs.cn/docs/babel-preset-typescript

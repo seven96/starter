@@ -18,6 +18,7 @@ specifiers:
   '@types/webpack-env': 1.18.0
   '@typescript-eslint/eslint-plugin': ^5.42.1
   '@typescript-eslint/parser': ^5.42.1
+  '@welldone-software/why-did-you-render': 7.0.1
   ahooks: 3.7.2
   antd: 4.24.1
   axios: 1.1.3
@@ -30,6 +31,7 @@ specifiers:
   cross-env: 7.0.3
   css-loader: 6.7.1
   css-minimizer-webpack-plugin: 4.2.2
+  dotenv: 16.0.3
   eslint: ^8.27.0
   eslint-import-resolver-typescript: 3.5.2
   eslint-plugin-react: ^7.31.10
@@ -103,6 +105,7 @@ devDependencies:
   '@types/webpack-env': 1.18.0
   '@typescript-eslint/eslint-plugin': 5.42.1_2udltptbznfmezdozpdoa2aemq
   '@typescript-eslint/parser': 5.42.1_rmayb2veg2btbq6mbmnyivgasy
+  '@welldone-software/why-did-you-render': 7.0.1_react@18.2.0
   babel-loader: 9.1.0_npabyccmuonwo2rku4k53xo3hi
   babel-plugin-import: 1.13.5
   cache-loader: 4.1.0_webpack@5.75.0
@@ -112,6 +115,7 @@ devDependencies:
   cross-env: 7.0.3
   css-loader: 6.7.1_webpack@5.75.0
   css-minimizer-webpack-plugin: 4.2.2_webpack@5.75.0
+  dotenv: 16.0.3
   eslint: 8.27.0
   eslint-import-resolver-typescript: 3.5.2_eslint@8.27.0
   eslint-plugin-react: 7.31.10_eslint@8.27.0
@@ -2365,6 +2369,15 @@ packages:
       webpack-dev-server: 4.11.1_pda42hcaj7d62cr262fr632kue
     dev: true
 
+  /@welldone-software/why-did-you-render/7.0.1_react@18.2.0:
+    resolution: {integrity: sha512-Qe/8Xxa2G+LMdI6VoazescPzjjkHYduCDa8aHOJR50e9Bgs8ihkfMBY+ev7B4oc3N59Zm547Sgjf8h5y0FOyoA==}
+    peerDependencies:
+      react: ^16 || ^17 || ^18
+    dependencies:
+      lodash: 4.17.21
+      react: 18.2.0
+    dev: true
+
   /@xtuc/ieee754/1.2.0:
     resolution: {integrity: sha512-DX8nKgqcGwsc0eJSqYt5lwP4DH5FlHnmuWWBRy7X0NcaGR0ZtuyeESgMwTYVEtxmsNGY+qit4QYT/MIYTOTPeA==}
     dev: true
@@ -3932,6 +3945,11 @@ packages:
   /dotenv/10.0.0:
     resolution: {integrity: sha512-rlBi9d8jpv9Sf1klPjNfFAuWDjKLwTIJJ/VxtoTwIR6hnZxcEOQCZg2oIL3MWBYw5GpUDKOEnND7LXTbIpQ03Q==}
     engines: {node: '>=10'}
+    dev: true
+
+  /dotenv/16.0.3:
+    resolution: {integrity: sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==}
+    engines: {node: '>=12'}
     dev: true
 
   /duplexer/0.1.2:
@@ -8189,7 +8207,6 @@ packages:
     engines: {node: '>=0.10.0'}
     dependencies:
       loose-envify: 1.4.0
-    dev: false
 
   /readable-stream/2.3.7:
     resolution: {integrity: sha512-Ebho8K4jIbHAxnuxi7o42OrZgF/ZTNcsZj6nRKyUmkhLFq8CHItp/fy6hQZuZmP/n3yZ9VBUbp4zz/mX8hmYPw==}

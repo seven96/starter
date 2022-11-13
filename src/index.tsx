@@ -1,3 +1,5 @@
+import "./wdyr";
+
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { RouterProvider } from 'react-router-dom';
@@ -14,6 +16,8 @@ import "@/locales"
 if (module && module.hot) {
     module.hot.accept();
 }
+
+console.log('process.env.NODE_ENV', process.env);
 
 const rootElement = document.getElementById('root')!;
 ReactDOM.createRoot(rootElement).render(
